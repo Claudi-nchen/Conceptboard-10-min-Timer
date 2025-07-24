@@ -1,0 +1,77 @@
+
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>10-Minuten-Timer</title>
+    <style>
+        body {
+            background-color: #001f3f;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding-top: 100px;
+        }
+        #timer {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+        button {
+            font-size: 20px;
+            padding: 10px 20px;
+            margin: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id="timer">10:00</div>
+    <button onclick="startTimer()">Start</button>
+    <button onclick="resetTimer()">Reset</button>
+
+    <audio id="beep1" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg" preload="auto"></audio>
+    <audio id="beep3" src="https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg" preload="auto"></audio>
+
+    <script>
+        let totalSeconds = 600;
+        let remainingSeconds = totalSeconds;
+        let interval = null;
+
+        function updateDisplay() {
+            const minutes = Math.floor(remainingSeconds / 60);
+            const seconds = remainingSeconds % 60;
+            document.getElementById("timer").textContent =
+                String(minutes).padStart(2, '0') + ":" + String(seconds).padStart(2, '0');
+        }
+
+        function startTimer() {
+            if (interval) return;
+            interval = setInterval(() => {
+                if (remainingSeconds === 300) {
+                    document.getElementById("beep1").play();
+                }
+                if (remainingSeconds === 0) {
+                    clearInterval(interval);
+                    interval = null;
+                    let beep3 = document.getElementById("beep3");
+                    beep3.play();
+                    setTimeout(() => beep3.play(), 1000);
+                    setTimeout(() => beep3.play(), 2000);
+                } else {
+                    remainingSeconds--;
+                    updateDisplay();
+                }
+            }, 1000);
+        }
+
+        function resetTimer() {
+            clearInterval(interval);
+            interval = null;
+            remainingSeconds = totalSeconds;
+            updateDisplay();
+        }
+
+        updateDisplay();
+    </script>
+</body>
+</html>
